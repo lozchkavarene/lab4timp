@@ -120,7 +120,7 @@ $ rm -rf log.txt
 ```
 
 ```sh
-$ git clone https://github.com/tp-labs/lab03 tmp
+$ git clone https://github.com/tp-labs/lab3 tmp
 $ mv -f tmp/CMakeLists.txt .
 $ rm -rf tmp
 ```
@@ -142,7 +142,7 @@ $ git push origin master
 
 ```sh
 $ popd
-$ export LAB_NUMBER=03
+$ export LAB_NUMBER=3
 $ git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
 $ mkdir reports/lab$3
 $ cp tasks/lab$3/README.md reports/lab${LAB_NUMBER}/REPORT.md
