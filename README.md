@@ -1,189 +1,104 @@
-## Laboratory work III
+# Отчет по лабораторной работе № 4
 
-Данная лабораторная работа посвещена изучению систем автоматизации сборки проекта на примере **CMake**
+### Цель работы
 
-```sh
-$ open https://cmake.org/
-```
+Данная лабораторная работа посвещена изучению систем непрерывной интеграции на примере сервиса **Travis CI**
 
-## Tasks
+### Задания
 
-- [ ] 1. Создать публичный репозиторий с названием **lab3timp** на сервисе **GitHub**
-- [ ] 2. Ознакомиться со ссылками учебного материала
-- [ ] 3. Выполнить инструкцию учебного материала
-- [ ] 4. Составить отчет и отправить ссылку личным сообщением в **Slack**
+- [x] 1. Авторизоваться на сервисе **Travis CI** с использованием **GitHub** аккаунта
+- [x] 2. Создать публичный репозиторий с названием **lab4** на сервисе **GitHub**
+- [x] 3. Ознакомиться со ссылками учебного материала
+- [x] 4. Включить интеграцию сервиса **Travis CI** с созданным репозиторием
+- [x] 5. Получить токен для **Travis CLI** с правами **repo** и **user**
+- [x] 6. Получить фрагмент вставки значка сервиса **Travis CI** в формате **Markdown** (конец отчета)
+- [x] 7. Выполнить инструкцию учебного материала
+- [x] 8. Составить отчет и отправить ссылку личным сообщением в **Slack**
 
-## Tutorial
-
-```sh
-$ export GITHUB_USERNAME=<имя_пользователя>
-```
-
-
+### Интеграция сервиса **Travis CI** с репозиторием **lab4**
 
 ```sh
-$ git clone https://github.com/$lozchkavarene/lab2timp.git projects/lab3timp
-$ cd projects/lab3timp
+$ git clone https://github.com/lozchkavarene/lab3timp projects/lab4
+$ cd projects/lab4
 $ git remote remove origin
-$ git remote add origin https://github.com/$lozchkavarene/lab3timp.git
+$ git remote add origin https://github.com/lozchkavarene/lab4
 ```
 
 ```sh
-$ g++ -std=c++11 -I./include -c sources/print.cpp
-$ ls print.o
-$ nm print.o | grep print
-$ ar rvs print.a print.o
-$ file print.a
-$ g++ -std=c++11 -I./include -c examples/example1.cpp
-$ ls example1.o
-$ g++ example1.o print.a -o example1
-$ ./example1 && echo
-```
-
-```sh
-$ g++ -std=c++11 -I./include -c examples/example2.cpp
-$ nm example2.o
-$ g++ example2.o print.a -o example2
-$ ./example2
-$ cat log.txt && echo
-```
-
-```sh
-$ rm -rf example1.o example2.o print.o
-$ rm -rf print.a
-$ rm -rf example1 example2
-$ rm -rf log.txt
-```
-
-```sh
-$ cat > CMakeLists.txt <<EOF
-cmake_minimum_required(VERSION 3.4)
-project(print)
+$ cat > .travis.yml <<EOF
+language: cpp
 EOF
 ```
 
 ```sh
-$ cat >> CMakeLists.txt <<EOF
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+$ cat >> .travis.yml <<EOF
+
+script:
+- cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=_install
+- cmake --build _build
+- cmake --build _build --target install
 EOF
 ```
 
 ```sh
-$ cat >> CMakeLists.txt <<EOF
-add_library(print STATIC \${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
+$ cat >> .travis.yml <<EOF
+
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake
+      - cmake-data
 EOF
 ```
 
 ```sh
-$ cat >> CMakeLists.txt <<EOF
-include_directories(\${CMAKE_CURRENT_SOURCE_DIR}/include)
-EOF
+$ travis login --github-token ${GITHUB_TOKEN}
 ```
 
 ```sh
-$ cmake -H. -B_build
-$ cmake --build _build
+$ travis lint
+  Hooray, .travis.yml looks valid :)
 ```
 
 ```sh
-$ cat >> CMakeLists.txt <<EOF
-
-add_executable(example1 \${CMAKE_CURRENT_SOURCE_DIR}/examples/example1.cpp)
-add_executable(example2 \${CMAKE_CURRENT_SOURCE_DIR}/examples/example2.cpp)
-EOF
-```
-
-```sh
-$ cat >> CMakeLists.txt <<EOF
-
-target_link_libraries(example1 print)
-target_link_libraries(example2 print)
-EOF
-```
-
-```sh
-$ cmake --build _build
-$ cmake --build _build --target print
-$ cmake --build _build --target example1
-$ cmake --build _build --target example2
-```
-
-```sh
-$ ls -la _build/libprint.a
-$ _build/example1 && echo
-hello
-$ _build/example2
-$ cat log.txt && echo
-hello
-$ rm -rf log.txt
-```
-
-```sh
-$ git clone https://github.com/tp-labs/lab3 tmp
-$ mv -f tmp/CMakeLists.txt .
-$ rm -rf tmp
-```
-
-```sh
-$ cat CMakeLists.txt
-$ cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=_install
-$ cmake --build _build --target install
-$ tree _install
-```
-
-```sh
-$ git add CMakeLists.txt
-$ git commit -m"added CMakeLists.txt"
+$ git add .travis.yml
+$ git add README.md
+$ git commit -m"added CI"
 $ git push origin master
 ```
 
-## Report
-
 ```sh
-$ popd
-$ export LAB_NUMBER=3
-$ git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
-$ mkdir reports/lab$3
-$ cp tasks/lab$3/README.md reports/lab${LAB_NUMBER}/REPORT.md
-$ cd reports/lab$3
-$ edit REPORT.md
-$ gist REPORT.md
+$ travis lint
+$ travis accounts
+$ travis sync
+$ travis repos
+$ travis enable
+$ travis whatsup
+$ travis branches
+$ travis history
+$ travis show
 ```
 
-## Homework
-
-Представьте, что вы стажер в компании "Formatter Inc.".
-### Задание 1
-Вам поручили перейти на систему автоматизированной сборки **CMake**.
-Исходные файлы находятся в директории [formatter_lib](formatter_lib).
-В этой директории находятся файлы для статической библиотеки *formatter*.
-Создайте `CMakeList.txt` в директории [formatter_lib](formatter_lib),
-с помощью которого можно будет собирать статическую библиотеку *formatter*.
-
-### Задание 2
-У компании "Formatter Inc." есть перспективная библиотека,
-которая является расширением предыдущей библиотеки. Т.к. вы уже овладели
-навыком созданием `CMakeList.txt` для статической библиотеки *formatter*, ваш 
-руководитель поручает заняться созданием `CMakeList.txt` для библиотеки 
-*formatter_ex*, которая в свою очередь использует библиотеку *formatter*.
-
-### Задание 3
-Конечно же ваша компания предоставляет примеры использования своих библиотек.
-Чтобы продемонстрировать как работать с библиотекой *formatter_ex*,
-вам необходимо создать два `CMakeList.txt` для двух простых приложений:
-* *hello_world*, которое использует библиотеку *formatter_ex*;
-* *solver*, приложение которое испольует статические библиотеки *formatter_ex* и *solver_lib*.
-
-
-
-## Links
-- [Основы сборки проектов на С/C++ при помощи CMake](https://eax.me/cmake/)
-- [CMake Tutorial](http://neerc.ifmo.ru/wiki/index.php?title=CMake_Tutorial)
-- [C++ Tutorial - make & CMake](https://www.bogotobogo.com/cplusplus/make.php)
-- [Autotools](http://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html)
-- [CMake](https://cgold.readthedocs.io/en/latest/index.html)
+### Выполнение домашнего задания
 
 ```
-Copyright (c) 2015-2021 The ISC Authors
+    Результат см. в текущем репозитории и на скриншотe ниже
 ```
+
+Вы продолжаете проходить стажировку в "Formatter Inc." (см [подробности](https://github.com/tp-labs/lab3#Homework)). В прошлый раз ваше задание заключалось в настройке автоматизированной системы **CMake**.
+
+Сейчас вам требуется настроить систему непрерывной интеграции для библиотек и приложений, с которыми вы работали в [прошлый раз](https://github.com/tp-labs/lab3#Homework). Настройте сборочные процедуры на различных платформах:
+* используйте [TravisCI](https://travis-ci.com/) для сборки на операционной системе **Linux** с использованием компиляторов **gcc** и **clang**;
+* используйте [AppVeyor](https://www.appveyor.com/) для сборки на операционной системе **Windows**.
+
+![Screenshot](./img/screen.png "Travis CI")
+
+## Ссылки
+
+- [Travis Client](https://github.com/travis-ci/travis.rb)
+- [AppVeyour](https://www.appveyor.com/)
+- [GitLab CI](https://about.gitlab.com/gitlab-ci/)
+
+[![Build Status](https://travis-ci.com/lozchkavarene/lab4.svg?branch=master)](https://travis-ci.com/lozchkavarene/lab4)
