@@ -1,0 +1,6 @@
+[submodule ".local/share/Trash/files/third-party.4/third-party/gtest"]
+	path = .local/share/Trash/files/third-party.4/third-party/gtest
+	url = https://github.com/google/googletest
+[submodule "third-party/gtest"]
+	path = third-party/gtest
+	url = https://github.com/google/googletest
